@@ -75,6 +75,10 @@ ifeq ($(MICROPY_PY_SSL), 1)
 MTB_DEPS_DIRS += crypto
 endif
 
+ifeq ($(MICROPY_PSOC6_BLUETOOTH), 1)
+MTB_DEPS_DIRS += ble
+endif
+
 mtb_config_deps: 
 	@:
 	$(info )
