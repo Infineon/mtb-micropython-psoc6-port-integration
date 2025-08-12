@@ -34,6 +34,11 @@ ifeq ($(MICROPY_PY_SSL), 1)
 MTB_DEPS_DIRS += crypto
 endif
 
+ifeq ($(MICROPY_PSOC6_BLUETOOTH), 1)
+MTB_DEPS_DIRS += ble
+endif
+
+
 # The ModusToolbox expects all the .mtb files to be in the /deps folder.
 # The feature specific dependencies organized in folders are directly copied 
 # to the deps/ root folder
@@ -94,7 +99,9 @@ mtb_clean:
 mtb_get_build_flags: mtb_build
 	@:
 	$(eval MPY_MTB_INCLUDE_DIRS = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/inclist.rsp))
-	$(eval INC += $(subst -I,-I$(MTB_LIBS_DIR)/,$(MPY_MTB_INCLUDE_DIRS)))
+	$(eval INC += $(patsubst -I%,-I$(MTB_LIBS_DIR)/%,\
+    $(join $(filter -I,$(MPY_MTB_INCLUDE_DIRS)),\
+           $(filter-out -I,$(MPY_MTB_INCLUDE_DIRS)))))
 	$(eval INC += -I$(BOARD_DIR))
 	$(eval MPY_MTB_LIBRARIES = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
 	$(eval LIBS += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME))
