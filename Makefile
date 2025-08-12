@@ -72,9 +72,6 @@ CONFIG=Debug
 # If set to "true" or "1", display full command-lines when building.
 VERBOSE=
 
-DEFINES+= PSOC6_BLE
-ENABLE_SPY_TRACES = 0
-USE_INTERNAL_FLASH = 1
 
 ################################################################################
 # Advanced Configuration
@@ -90,7 +87,14 @@ USE_INTERNAL_FLASH = 1
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS+=FREERTOS WICED_BLE
+COMPONENTS+=FREERTOS
+
+ifeq ($(MICROPY_PSOC6_BLUETOOTH), 1)
+COMPONENTS+=WICED_BLE
+DEFINES+= PSOC6_BLE
+ENABLE_SPY_TRACES = 0
+USE_INTERNAL_FLASH = 1
+endif
 
 ifeq ($(MICROPY_PY_NETWORK),1)
 COMPONENTS+= LWIP
