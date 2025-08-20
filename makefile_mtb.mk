@@ -83,7 +83,7 @@ mtb_deinit: clean
 
 # Some of the configuration variables are passed to the ModusToolbox 
 # Makefile to include/exclude certain middleware libraries and components
-MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) BOARD=$(BOARD)
+MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) MICROPY_PSOC6_BLUETOOTH=$(MICROPY_PSOC6_BLUETOOTH) BOARD=$(BOARD)
 
 # build MTB project
 mtb_build:
@@ -103,11 +103,12 @@ mtb_get_build_flags: mtb_build
     $(join $(filter -I,$(MPY_MTB_INCLUDE_DIRS)),\
            $(filter-out -I,$(MPY_MTB_INCLUDE_DIRS)))))
 	$(eval INC += -I$(BOARD_DIR))
-	$(eval MPY_MTB_LIBRARIES = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
-	$(eval LIBS += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME))
+	$(eval MPY_MTB_LIBRARIES =  $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
+	$(eval MPY_MTB_LIBRARIES = $(patsubst ../%,$(MTB_LIBS_DIR)/$(MPY_MTB_LIBRARIES), $(MPY_MTB_LIBRARIES)))
+	$(eval LIBS += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME) $(MPY_MTB_LIBRARIES))
 	$(eval CFLAGS += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ccxxflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cycompiler ))
 	$(eval CXXFLAGS += $(CFLAGS))
-	$(eval LDFLAGS += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ldflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cylinker $(MTB_LIBS_DIR)))
+	$(eval LDFLAGS += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ldflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cylinker $(MTB_LIBS_DIR))) 
 	$(eval QSTR_GEN_CFLAGS += $(INC) $(CFLAGS))
 
 # When multiple types of boards are connected, a devs file needs to be provided.
