@@ -107,6 +107,8 @@ endif
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=
 
+CORE=CM4
+
 # By default the build system automatically looks in the Makefile's directory
 # tree for source code and builds it. The SOURCES variable can be used to
 # manually add source code to the build process from a location not searched
