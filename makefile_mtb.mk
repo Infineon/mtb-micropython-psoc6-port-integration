@@ -34,7 +34,7 @@ ifeq ($(MICROPY_PY_SSL), 1)
 MTB_DEPS_DIRS += crypto
 endif
 
-ifeq ($(MICROPY_PSOC6_BLUETOOTH), 1)
+ifeq ($(MICROPY_PY_BLUETOOTH), 1)
 MTB_DEPS_DIRS += ble
 endif
 
@@ -83,7 +83,8 @@ mtb_deinit: clean
 
 # Some of the configuration variables are passed to the ModusToolbox 
 # Makefile to include/exclude certain middleware libraries and components
-MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) MICROPY_PSOC6_BLUETOOTH=$(MICROPY_PSOC6_BLUETOOTH) BOARD=$(BOARD)
+MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) MICROPY_PY_BLUETOOTH=$(MICROPY_PY_BLUETOOTH) BOARD=$(BOARD)
+
 
 # build MTB project
 mtb_build:
@@ -94,6 +95,8 @@ mtb_build:
 
 mtb_clean:
 	-$ rm -rf $(MTB_LIBS_BUILD_DIR)
+	$(Q)rm -rf $(MTB_LIBS_DIR)/GeneratedSource/
+	$(Q)rm -f $(MTB_LIBS_DIR)/design.cybt
 
 # get variables set for includes, objects, etc. and add to mpy makefile variables
 mtb_get_build_flags: mtb_build
