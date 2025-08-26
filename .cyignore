@@ -8,6 +8,8 @@ images
 
 docs
 
+ble/design.cybt
+
 # LwIP
 $(SEARCH_lwip)/contrib/addons
 $(SEARCH_lwip)/contrib/apps

@@ -38,6 +38,14 @@ ifeq ($(MICROPY_PY_BLUETOOTH), 1)
 MTB_DEPS_DIRS += ble
 endif
 
+.PHONY: mtb_ble_gen
+mtb_ble_gen:
+ifeq ($(MICROPY_PY_BLUETOOTH),1)
+	$(Q) cp $(MTB_LIBS_DIR)/ble/design.cybt $(MTB_LIBS_DIR)
+else
+@:
+endif
+
 
 # The ModusToolbox expects all the .mtb files to be in the /deps folder.
 # The feature specific dependencies organized in folders are directly copied 
@@ -87,7 +95,7 @@ MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MI
 
 
 # build MTB project
-mtb_build:
+mtb_build: mtb_ble_gen
 	$(info )
 	$(info Building $(BOARD) in $(CONFIG) mode using MTB ...)
 	$(Q) $(MAKE) -C $(MTB_LIBS_DIR) CONFIG=$(MPY_MTB_CONFIG) $(MPY_MTB_MAKE_VARS) build 
