@@ -31,7 +31,7 @@ mtb_get_build_flags: mtb_build
 	$(eval MPY_MTB_LIBRARIES   = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
 	$(eval MPY_MTB_LIBRARIES = $(patsubst ../%,$(MTB_LIBS_DIR)/$(MPY_MTB_LIBRARIES), $(MPY_MTB_LIBRARIES)))
 	$(eval LIBS 			   += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME).a $(MPY_MTB_LIBRARIES))
-	$(eval CFLAGS              += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_builds_info.py ccxxflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cycompiler ))
+	$(eval CFLAGS              += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ccxxflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cycompiler ))
 	$(eval CXXFLAGS            += $(CFLAGS))
 	$(eval LDFLAGS             += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ldflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cylinker $(MTB_LIBS_DIR)))
 	$(eval QSTR_GEN_CFLAGS     += $(INC) $(CFLAGS))
