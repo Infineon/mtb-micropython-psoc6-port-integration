@@ -13,7 +13,7 @@ MTB_STATIC_LIB_NAME		 = $(shell egrep '^ *LIBNAME' $(MTB_MAKEFILE) | sed 's/^.*=
 MTB_BUILD_METAFILES_NAME = inclist.rsp liblist.rsp artifact.rsp .cycompiler .cylinker $(MTB_STATIC_LIB_NAME).a
 MTB_BUILD_METAFILES      = $(addprefix $(MTB_LIBS_BOARD_BUILD_DIR)/,$(MTB_BUILD_METAFILES_NAME))
 
-MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) BOARD=$(BOARD) CONFIG=$(CONFIG)
+MPY_MTB_MAKE_VARS = MICROPY_PY_NETWORK=$(MICROPY_PY_NETWORK) MICROPY_PY_SSL=$(MICROPY_PY_SSL) MICROPY_PY_BLUETOOTH=$(MICROPY_PY_BLUETOOTH) BOARD=$(BOARD) CONFIG=$(CONFIG)
 
 $(MTB_BUILD_METAFILES):
 	$(info )
@@ -24,11 +24,14 @@ mtb_build: $(MTB_BUILD_METAFILES)
 
 mtb_get_build_flags: mtb_build
 	$(eval MPY_MTB_INCLUDE_DIRS = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/inclist.rsp))
-	$(eval INC                 += $(subst -I,-I$(MTB_LIBS_DIR)/,$(MPY_MTB_INCLUDE_DIRS)))
+	$(eval INC += $(patsubst -I%,-I$(MTB_LIBS_DIR)/%,\
+    $(join $(filter -I,$(MPY_MTB_INCLUDE_DIRS)),\
+           $(filter-out -I,$(MPY_MTB_INCLUDE_DIRS)))))
 	$(eval INC                 += -I$(BOARD_DIR))
-	$(eval MPY_MTB_LIBRARIES    = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
-	$(eval LIBS                += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME).a)
-	$(eval CFLAGS              += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ccxxflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cycompiler ))
+	$(eval MPY_MTB_LIBRARIES   = $(file < $(MTB_LIBS_BOARD_BUILD_DIR)/liblist.rsp))
+	$(eval MPY_MTB_LIBRARIES = $(patsubst ../%,$(MTB_LIBS_DIR)/$(MPY_MTB_LIBRARIES), $(MPY_MTB_LIBRARIES)))
+	$(eval LIBS 			   += $(MTB_LIBS_BOARD_BUILD_DIR)/$(MTB_STATIC_LIB_NAME).a $(MPY_MTB_LIBRARIES))
+	$(eval CFLAGS              += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_builds_info.py ccxxflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cycompiler ))
 	$(eval CXXFLAGS            += $(CFLAGS))
 	$(eval LDFLAGS             += $(shell $(PYTHON) $(MTB_LIBS_DIR)/mtb_build_info.py ldflags $(MTB_LIBS_BOARD_BUILD_DIR)/.cylinker $(MTB_LIBS_DIR)))
 	$(eval QSTR_GEN_CFLAGS     += $(INC) $(CFLAGS))

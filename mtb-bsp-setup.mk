@@ -39,7 +39,15 @@ endif
 
 -include $(BOARD_DIR)/mpconfigboard.mk
 
-mtb_init: $(MTB_ACTIVE_BSP_FILE)
+.PHONY: mtb_ble_gen
+mtb_ble_gen:
+ifeq ($(MICROPY_PY_BLUETOOTH),1)
+	$(Q) cp $(MTB_LIBS_DIR)/ble/design.cybt $(MTB_LIBS_DIR)
+else
+@:
+endif
+
+mtb_init: $(MTB_ACTIVE_BSP_FILE) 
 
 $(MTB_ACTIVE_BSP_FILE):
 	$(info )
@@ -50,7 +58,7 @@ $(MTB_ACTIVE_BSP_FILE):
 
 # Added as separate target to ensure it is only run when 
 # the .mtb_active_bsp file does not exist
-mtb_bsp_init: mtb_deinit mtb_add_bsp mtb_set_bsp mtb_get_libs
+mtb_bsp_init: mtb_deinit mtb_ble_gen mtb_add_bsp mtb_set_bsp mtb_get_libs
 
 # The ModusToolbox expects all the .mtb files to be in the /deps folder.
 # The feature specific dependencies organized in folders are directly copied 
@@ -75,7 +83,7 @@ ifeq ($(MICROPY_PY_SSL), 1)
 MTB_DEPS_DIRS += crypto
 endif
 
-ifeq ($(MICROPY_PSOC6_BLUETOOTH), 1)
+ifeq ($(MICROPY_PY_BLUETOOTH), 1)
 MTB_DEPS_DIRS += ble
 endif
 
@@ -110,6 +118,9 @@ mtb_deinit: mtb_clean
 	-$(Q) cd $(MTB_LIBS_DIR); rm -rf libs
 	-$(Q) cd $(MTB_LIBS_DIR); rm -rf ../mtb_shared
 	-$(Q) cd $(MTB_LIBS_DIR); find deps/*.mtb -maxdepth 1 -type f -delete
+	-$(Q) rm -rf $(MTB_LIBS_BUILD_DIR)
+	-$(Q)rm -rf $(MTB_LIBS_DIR)/GeneratedSource/
+	-$(Q)rm -f $(MTB_LIBS_DIR)/design.cybt
 	-$(Q) rm -f $(MTB_ACTIVE_BSP_FILE)
 
 mtb_bsp_help:
