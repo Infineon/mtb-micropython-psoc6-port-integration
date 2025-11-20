@@ -209,16 +209,16 @@ CY_COMPILER_PATH=
 
 # Locate ModusToolbox IDE helper tools folders in default installation
 # locations for Windows, Linux, and macOS.
-CY_WIN_HOME=$(subst \,/,$(USERPROFILE))
-CY_TOOLS_PATHS ?= $(wildcard \
-    $(CY_WIN_HOME)/ModusToolbox/tools_* \
-    $(HOME)/ModusToolbox/tools_* \
-    /Applications/ModusToolbox/tools_*)
+# CY_WIN_HOME=$(subst \,/,$(USERPROFILE))
+# CY_TOOLS_PATHS ?= $(wildcard \
+#     $(CY_WIN_HOME)/ModusToolbox/tools_* \
+#     $(HOME)/ModusToolbox/tools_* \
+#     /Applications/ModusToolbox/tools_*)
 
 # If you install ModusToolbox IDE in a custom location, add the path to its
 # "tools_X.Y" folder (where X and Y are the version number of the tools
 # folder). Make sure you use forward slashes.
-CY_TOOLS_PATHS+=
+CY_TOOLS_PATHS=$(HOME)/ModusToolbox/tools_3.0
 
 # Default to the newest installed tools folder, or the users override (if it's
 # found).
