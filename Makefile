@@ -121,7 +121,7 @@ DEFINES+=CY_WIFI_HOST_WAKE_SW_FORCE=0
 endif
 
 ifeq ($(MICROPY_PY_SSL),1)
-DEFINES+=MBEDTLS_USER_CONFIG_FILE='"mbedtls_config.h"'
+DEFINES+=MBEDTLS_USER_CONFIG_FILE='"mbedtls_config_port.h"'
 endif
 
 # Like SOURCES, but for include directories. Value should be paths to
